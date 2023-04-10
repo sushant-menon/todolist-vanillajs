@@ -4,7 +4,7 @@ const itemList = document.getElementById("item-list");
 const clearButton = document.getElementById("clear");
 const itemFilter = document.getElementById("filter");
 
-function addItem(e) {
+function onAddItemSubmit(e) {
   e.preventDefault();
 
   const newItem = itemInput.value;
@@ -15,19 +15,41 @@ function addItem(e) {
     return;
   }
 
+  addItemToDOM(newItem);
+
+  addItemToStorage(newItem);
+
+  checkUI();
+
+  itemInput.value = "";
+}
+
+function addItemToDOM(item) {
   //Create list items
 
   const li = document.createElement("li");
-  li.appendChild(document.createTextNode(newItem));
+  li.appendChild(document.createTextNode(item));
 
   const button = createButton("remove-item btn-link text-red");
   li.appendChild(button);
 
   itemList.appendChild(li);
+}
 
-  checkUI();
+function addItemToStorage(item) {
+  let itemsFromStorage;
 
-  itemInput.value = "";
+  if (localStorage.getItem("items") === null) {
+    itemsFromStorage = [];
+  } else {
+    itemsFromStorage = JSON.parse(localStorage.getItem("items"));
+  }
+
+  itemsFromStorage.push(item);
+
+  //convert to Json string and set to local storage
+
+  localStorage.setItem("items", JSON.stringify(itemsFromStorage));
 }
 
 function createButton(classes) {
@@ -46,7 +68,7 @@ function createIcon(classes) {
 
 function removeItem(e) {
   if (e.target.parentElement.classList.contains("remove-item")) {
-    if (confirm("Are you sure?")) {
+    if (confirm("You want to remove this task?")) {
       e.target.parentElement.parentElement.remove();
 
       checkUI();
@@ -90,7 +112,7 @@ function searchItems(e) {
 }
 
 // Event Listener
-itemForm.addEventListener("submit", addItem);
+itemForm.addEventListener("submit", onAddItemSubmit);
 itemList.addEventListener("click", removeItem);
 clearButton.addEventListener("click", clearItems);
 itemFilter.addEventListener("input", searchItems);
