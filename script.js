@@ -119,7 +119,7 @@ function setItemToEdit(item) {
 }
 
 function removeItem(item) {
-  if (confirm("Are you sure?")) {
+  if (confirm("You want to remove this task?")) {
     //remove item from dom
     item.remove();
 
